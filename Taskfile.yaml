@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  run:
+    cmds:
+      - go run .
+  test:
+    cmds:
+      - go build ./...
+      - go test ./...
+  cover:
+    cmds:
+      - go test ./... -coverprofile=.cover.out
+      - go tool cover -html=.cover.out
+  lint:
+    cmds:
+      - golangci-lint run "./..."

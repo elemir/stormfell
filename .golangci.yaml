@@ -1,0 +1,30 @@
+linters:
+  enable-all: true
+  disable:
+    - exportloopref
+    - depguard
+    - tparallel
+    - paralleltest
+    - mnd
+linters-settings:
+  varnamelen:
+    ignore-names:
+      - xs
+    ignore-decls:
+      - i int
+      - id ID
+      - x float64
+      - y float64
+  gosec:
+    excludes:
+      - G404 # Insecure random number source (rand)
+  ireturn:
+    allow:
+      - anon
+      - error
+      - empty
+      - stdlib
+      - generic
+  funlen:
+    lines: 200
+    statements: 150
