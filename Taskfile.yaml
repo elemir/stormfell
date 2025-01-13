@@ -15,3 +15,6 @@ tasks:
   lint:
     cmds:
       - golangci-lint run "./..."
+  lint-fix:
+    cmds:
+      - golangci-lint run --fix "./..."

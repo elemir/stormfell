@@ -6,12 +6,14 @@ linters:
     - tparallel
     - paralleltest
     - mnd
+    - exhaustruct
 linters-settings:
   varnamelen:
     ignore-names:
       - xs
     ignore-decls:
       - i int
+      - j int
       - id ID
       - x float64
       - y float64
