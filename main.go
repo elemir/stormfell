@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"os"
 
 	"github.com/elemir/gloomo"
 	"github.com/elemir/gloomo/container"
-	"github.com/elemir/gloomo/draw"
 	gid "github.com/elemir/gloomo/id"
+	"github.com/elemir/gloomo/loader"
+	gmodel "github.com/elemir/gloomo/model"
 	"github.com/elemir/gloomo/repo"
 	"github.com/elemir/stormfell/algo"
 	"github.com/elemir/stormfell/model"
@@ -37,22 +37,20 @@ func (g *Game) Draw(img *ebiten.Image) {
 func (g *Game) Update() error {
 	err := g.manager.Run()
 	if err != nil {
-		slog.Error("unable to run manager", slog.Any("err", err))
-
-		return fmt.Errorf("run manager: %w", err)
+		slog.Error("Manager cycle run", slog.Any("err", err))
 	}
 
 	return nil
 }
 
 func (g *Game) Layout(w int, h int) (int, int) {
-	g.w, g.h = w, h
+	g.w, g.h = w/3, h/3
 
-	return w, h
+	return g.w, g.h
 }
 
 func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.TileMap],
-	nodeRepo *repo.Node,
+	spriteRepo *repo.Sprite, imgAssets *loader.Assets[*ebiten.Image],
 ) *gloomo.Manager {
 	var manager gloomo.Manager
 
@@ -69,9 +67,15 @@ func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.Tile
 	})
 
 	manager.AddStartup(&start.CreateTiles{
-		IDGen:    idGen,
-		NodeRepo: nodeRepo,
-		Getter:   tileMap,
+		IDGen:       idGen,
+		SpriteRepo:  spriteRepo,
+		Getter:      tileMap,
+		ImageLoader: imgAssets,
+	})
+
+	manager.Add(&loader.Image{
+		AssetDir: "assets",
+		Assets:   imgAssets,
 	})
 
 	return &manager
@@ -79,17 +83,22 @@ func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.Tile
 
 func main() {
 	var tileMap container.Resource[model.TileMap]
-
-	var nodes container.SparseArray[draw.Node]
-
+	var nodes container.SparseArray[gmodel.Node]
+	var images container.SparseArray[*ebiten.Image]
+	var imgAssets loader.Assets[*ebiten.Image]
 	var idGen gid.Generator
 
 	nodeRepo := &repo.Node{
 		Nodes: &nodes,
 	}
 
+	spriteRepo := &repo.Sprite{
+		Nodes:  &nodes,
+		Images: &images,
+	}
+
 	rend := gloomo.NewRender(nodeRepo)
-	manager := prepareManager(&idGen, &tileMap, nodeRepo)
+	manager := prepareManager(&idGen, &tileMap, spriteRepo, &imgAssets)
 
 	ebiten.SetFullscreen(true)
 
