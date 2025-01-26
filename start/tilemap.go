@@ -7,13 +7,14 @@ import (
 
 	gid "github.com/elemir/gloomo/id"
 	gmodel "github.com/elemir/gloomo/model"
-	"github.com/elemir/stormfell/model"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/elemir/stormfell/model"
 )
 
 var (
 	errTileMapIsNotExist = errors.New("tile map is not exist")
-	imageNotLoadedErr    = errors.New("image not loaded")
+	errImageNotLoaded    = errors.New("image not loaded")
 )
 
 type IDGenerator interface {
@@ -48,12 +49,12 @@ func (ct *CreateTiles) Run() error {
 
 	dirtImg, ok := ct.ImageLoader.Load("dirt.png")
 	if !ok {
-		return imageNotLoadedErr
+		return errImageNotLoaded
 	}
 
 	waterImg, ok := ct.ImageLoader.Load("water.png")
 	if !ok {
-		return imageNotLoadedErr
+		return errImageNotLoaded
 	}
 
 	for i := range 50 {

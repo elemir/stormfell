@@ -3,8 +3,9 @@ package algo_test
 import (
 	"testing"
 
-	"github.com/elemir/stormfell/algo"
 	"github.com/stretchr/testify/require"
+
+	"github.com/elemir/stormfell/algo"
 )
 
 func TestBinSearch(t *testing.T) {

@@ -8,10 +8,16 @@ linters:
     - mnd
     - exhaustruct
 linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - localmodule
   varnamelen:
     ignore-names:
       - xs
     ignore-decls:
+      - ok bool
       - i int
       - j int
       - id ID

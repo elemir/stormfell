@@ -9,11 +9,12 @@ import (
 	gid "github.com/elemir/gloomo/id"
 	"github.com/elemir/gloomo/loader"
 	gmodel "github.com/elemir/gloomo/model"
-	"github.com/elemir/gloomo/repo"
+	grepo "github.com/elemir/gloomo/repo"
+	"github.com/hajimehoshi/ebiten/v2"
+
 	"github.com/elemir/stormfell/algo"
 	"github.com/elemir/stormfell/model"
 	"github.com/elemir/stormfell/start"
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Manager interface {
@@ -50,7 +51,7 @@ func (g *Game) Layout(w int, h int) (int, int) {
 }
 
 func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.TileMap],
-	spriteRepo *repo.Sprite, imgAssets *loader.Assets[*ebiten.Image],
+	spriteRepo *grepo.Sprite, imgAssets *loader.Assets[*ebiten.Image],
 ) *gloomo.Manager {
 	var manager gloomo.Manager
 
@@ -83,16 +84,20 @@ func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.Tile
 
 func main() {
 	var tileMap container.Resource[model.TileMap]
+
 	var nodes container.SparseArray[gmodel.Node]
+
 	var images container.SparseArray[*ebiten.Image]
+
 	var imgAssets loader.Assets[*ebiten.Image]
+
 	var idGen gid.Generator
 
-	nodeRepo := &repo.Node{
+	nodeRepo := &grepo.Node{
 		Nodes: &nodes,
 	}
 
-	spriteRepo := &repo.Sprite{
+	spriteRepo := &grepo.Sprite{
 		Nodes:  &nodes,
 		Images: &images,
 	}
