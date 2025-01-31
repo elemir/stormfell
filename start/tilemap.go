@@ -79,5 +79,6 @@ func (ct *CreateTiles) Run() error {
 func randImg(img *ebiten.Image, count int) *ebiten.Image {
 	n := rand.IntN(count)
 
+	//nolint:forcetypeassert // SubImage for ebiten image always returns ebiten image
 	return img.SubImage(image.Rect(n*32, 0, n*32+32, 32)).(*ebiten.Image)
 }

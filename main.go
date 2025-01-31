@@ -1,12 +1,14 @@
 package main
 
 import (
+	"image"
 	"log/slog"
 	"os"
 
 	"github.com/elemir/gloomo"
 	"github.com/elemir/gloomo/container"
 	gid "github.com/elemir/gloomo/id"
+	"github.com/elemir/gloomo/input"
 	"github.com/elemir/gloomo/loader"
 	gmodel "github.com/elemir/gloomo/model"
 	grepo "github.com/elemir/gloomo/repo"
@@ -14,7 +16,9 @@ import (
 
 	"github.com/elemir/stormfell/algo"
 	"github.com/elemir/stormfell/model"
+	"github.com/elemir/stormfell/repo"
 	"github.com/elemir/stormfell/start"
+	"github.com/elemir/stormfell/system"
 )
 
 type Manager interface {
@@ -50,13 +54,21 @@ func (g *Game) Layout(w int, h int) (int, int) {
 	return g.w, g.h
 }
 
-func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.TileMap],
-	spriteRepo *grepo.Sprite, imgAssets *loader.Assets[*ebiten.Image],
-) *gloomo.Manager {
+func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
+	var idGen gid.Generator
+	var objPosition container.SparseArray[image.Point]
+	var tileMap container.Resource[model.TileMap]
+
+	var mouseInput input.Mouse
+	var imgAssets loader.Assets[*ebiten.Image]
 	var manager gloomo.Manager
 
 	perlinNoise := algo.NewPerlinNoise()
 	fractalNoise := algo.NewFractalNoise(perlinNoise, 8, 0.5)
+
+	unitRepo := &repo.Unit{
+		Positions: &objPosition,
+	}
 
 	manager.AddStartup(&start.MapGenerator{
 		Coeff:  0.05,
@@ -64,34 +76,33 @@ func prepareManager(idGen *gid.Generator, tileMap *container.Resource[model.Tile
 		Height: 1000,
 		Noise:  fractalNoise,
 		Levels: []float64{-0.3, 0},
-		Setter: tileMap,
+		Setter: &tileMap,
 	})
 
 	manager.AddStartup(&start.CreateTiles{
-		IDGen:       idGen,
+		IDGen:       &idGen,
 		SpriteRepo:  spriteRepo,
-		Getter:      tileMap,
-		ImageLoader: imgAssets,
+		Getter:      &tileMap,
+		ImageLoader: &imgAssets,
 	})
 
 	manager.Add(&loader.Image{
 		AssetDir: "assets",
-		Assets:   imgAssets,
+		Assets:   &imgAssets,
+	})
+
+	manager.Add(&system.SpawnWarrior{
+		IDGen:      &idGen,
+		MouseInput: &mouseInput,
+		UnitRepo:   unitRepo,
 	})
 
 	return &manager
 }
 
 func main() {
-	var tileMap container.Resource[model.TileMap]
-
 	var nodes container.SparseArray[gmodel.Node]
-
 	var images container.SparseArray[*ebiten.Image]
-
-	var imgAssets loader.Assets[*ebiten.Image]
-
-	var idGen gid.Generator
 
 	nodeRepo := &grepo.Node{
 		Nodes: &nodes,
@@ -103,7 +114,7 @@ func main() {
 	}
 
 	rend := gloomo.NewRender(nodeRepo)
-	manager := prepareManager(&idGen, &tileMap, spriteRepo, &imgAssets)
+	manager := prepareManager(spriteRepo)
 
 	ebiten.SetFullscreen(true)
 

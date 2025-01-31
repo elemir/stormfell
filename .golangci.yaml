@@ -8,6 +8,8 @@ linters:
     - mnd
     - exhaustruct
 linters-settings:
+  wsl:
+    allow-cuddle-declarations: true
   gci:
     sections:
       - standard
