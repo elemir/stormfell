@@ -6,7 +6,7 @@ import (
 	"math/rand/v2"
 
 	gid "github.com/elemir/gloomo/id"
-	gmodel "github.com/elemir/gloomo/model"
+	"github.com/elemir/gloomo/node"
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/elemir/stormfell/model"
@@ -30,8 +30,8 @@ type ImageLoader interface {
 }
 
 type SpriteRepo interface {
-	Get(id gid.ID) (gmodel.Sprite, bool)
-	Upsert(id gid.ID, sprite gmodel.Sprite)
+	Get(id gid.ID) (node.Sprite, bool)
+	Upsert(id gid.ID, sprite node.Sprite)
 }
 
 type CreateTiles struct {
@@ -66,7 +66,7 @@ func (ct *CreateTiles) Run() error {
 			}
 
 			id := ct.IDGen.New()
-			ct.SpriteRepo.Upsert(id, gmodel.Sprite{
+			ct.SpriteRepo.Upsert(id, node.Sprite{
 				Image:    img,
 				Position: image.Pt(i*32, j*32),
 			})

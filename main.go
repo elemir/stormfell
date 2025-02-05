@@ -11,7 +11,9 @@ import (
 	"github.com/elemir/gloomo/input"
 	"github.com/elemir/gloomo/loader"
 	gmodel "github.com/elemir/gloomo/model"
+	"github.com/elemir/gloomo/node"
 	grepo "github.com/elemir/gloomo/repo"
+	gsystem "github.com/elemir/gloomo/system"
 	"github.com/hajimehoshi/ebiten/v2"
 
 	"github.com/elemir/stormfell/algo"
@@ -56,18 +58,35 @@ func (g *Game) Layout(w int, h int) (int, int) {
 
 func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 	var idGen gid.Generator
-	var objPosition container.SparseArray[image.Point]
 	var tileMap container.Resource[model.TileMap]
+
+	var objPositions container.SparseArray[image.Point]
+	var animations container.SparseArray[*gmodel.Animation]
+	var stepCounters container.SparseArray[int]
+	var currentAnimations container.SparseArray[string]
+	var zIndices container.SparseArray[int]
 
 	var mouseInput input.Mouse
 	var imgAssets loader.Assets[*ebiten.Image]
+	var animAssets loader.Assets[*gmodel.Animation]
 	var manager gloomo.Manager
 
 	perlinNoise := algo.NewPerlinNoise()
 	fractalNoise := algo.NewFractalNoise(perlinNoise, 8, 0.5)
 
 	unitRepo := &repo.Unit{
-		Positions: &objPosition,
+		Animations:        &animations,
+		Positions:         &objPositions,
+		ZIndices:          &zIndices,
+		CurrentAnimations: &currentAnimations,
+	}
+
+	animRepo := &grepo.AnimatedSprite{
+		Animations:        &animations,
+		Positions:         &objPositions,
+		ZIndices:          &zIndices,
+		StepCounters:      &stepCounters,
+		CurrentAnimations: &currentAnimations,
 	}
 
 	manager.AddStartup(&start.MapGenerator{
@@ -91,17 +110,28 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 		Assets:   &imgAssets,
 	})
 
+	manager.Add(&loader.Animation{
+		AssetDir: "assets",
+		Assets:   &animAssets,
+	})
+
 	manager.Add(&system.SpawnWarrior{
-		IDGen:      &idGen,
-		MouseInput: &mouseInput,
-		UnitRepo:   unitRepo,
+		IDGen:           &idGen,
+		MouseInput:      &mouseInput,
+		UnitRepo:        unitRepo,
+		AnimationLoader: &animAssets,
+	})
+
+	manager.Add(&gsystem.Animate{
+		AnimationRepo: animRepo,
+		SpriteRepo:    spriteRepo,
 	})
 
 	return &manager
 }
 
 func main() {
-	var nodes container.SparseArray[gmodel.Node]
+	var nodes container.SparseArray[node.Node]
 	var images container.SparseArray[*ebiten.Image]
 
 	nodeRepo := &grepo.Node{

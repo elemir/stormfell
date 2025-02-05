@@ -6,28 +6,24 @@ linters:
     - tparallel
     - paralleltest
     - mnd
-    - exhaustruct
 linters-settings:
-  wsl:
-    allow-cuddle-declarations: true
+  funlen:
+    lines: 200
+    statements: 150
   gci:
     sections:
       - standard
       - default
       - localmodule
-  varnamelen:
-    ignore-names:
-      - xs
-    ignore-decls:
-      - ok bool
-      - i int
-      - j int
-      - id ID
-      - x float64
-      - y float64
+  godox:
+    keywords: ["FIXME"]
   gosec:
     excludes:
       - G404 # Insecure random number source (rand)
+  exhaustruct:
+    include:
+      - '.+/system\.[a-zA-Z0-9]+$'
+      - '.+/repo\.[a-zA-Z0-9]+$'
   ireturn:
     allow:
       - anon
@@ -35,6 +31,15 @@ linters-settings:
       - empty
       - stdlib
       - generic
-  funlen:
-    lines: 200
-    statements: 150
+  varnamelen:
+    ignore-names:
+      - xs
+    ignore-decls:
+      - ok bool
+      - i int
+      - j int
+      - id gid.ID
+      - x float64
+      - y float64
+  wsl:
+    allow-cuddle-declarations: true
