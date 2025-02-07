@@ -1,12 +1,12 @@
 package main
 
 import (
-	"image"
 	"log/slog"
 	"os"
 
 	"github.com/elemir/gloomo"
 	"github.com/elemir/gloomo/container"
+	"github.com/elemir/gloomo/geom"
 	gid "github.com/elemir/gloomo/id"
 	"github.com/elemir/gloomo/input"
 	"github.com/elemir/gloomo/loader"
@@ -60,15 +60,16 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 	var idGen gid.Generator
 	var tileMap container.Resource[model.TileMap]
 
-	var objPositions container.SparseArray[image.Point]
-	var animations container.SparseArray[*gmodel.Animation]
+	var objPositions container.SparseArray[geom.Vec2]
+	var objVelocities container.SparseArray[geom.Vec2]
+	var animations container.SparseArray[*gmodel.AnimationSheet]
 	var stepCounters container.SparseArray[int]
 	var currentAnimations container.SparseArray[string]
 	var zIndices container.SparseArray[int]
 
 	var mouseInput input.Mouse
 	var imgAssets loader.Assets[*ebiten.Image]
-	var animAssets loader.Assets[*gmodel.Animation]
+	var animAssets loader.Assets[*gmodel.AnimationSheet]
 	var manager gloomo.Manager
 
 	perlinNoise := algo.NewPerlinNoise()
@@ -77,6 +78,7 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 	unitRepo := &repo.Unit{
 		Animations:        &animations,
 		Positions:         &objPositions,
+		Velocities:        &objVelocities,
 		ZIndices:          &zIndices,
 		CurrentAnimations: &currentAnimations,
 	}
@@ -133,14 +135,16 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 func main() {
 	var nodes container.SparseArray[node.Node]
 	var images container.SparseArray[*ebiten.Image]
+	var mirrors container.Set
 
 	nodeRepo := &grepo.Node{
 		Nodes: &nodes,
 	}
 
 	spriteRepo := &grepo.Sprite{
-		Nodes:  &nodes,
-		Images: &images,
+		Nodes:   &nodes,
+		Images:  &images,
+		Mirrors: &mirrors,
 	}
 
 	rend := gloomo.NewRender(nodeRepo)

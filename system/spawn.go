@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"image"
 	"iter"
+	"math/rand/v2"
 
+	"github.com/elemir/gloomo/geom"
 	gid "github.com/elemir/gloomo/id"
 	"github.com/elemir/gloomo/input"
 	gmodel "github.com/elemir/gloomo/model"
@@ -21,7 +23,7 @@ type MouseInput interface {
 }
 
 type AnimationLoader interface {
-	Load(path string) (*gmodel.Animation, bool)
+	Load(path string) (*gmodel.AnimationSheet, bool)
 }
 
 type UnitRepo interface {
@@ -52,10 +54,14 @@ func (sw *SpawnWarrior) Run() error {
 		return nil
 	}
 
+	// TODO(elemir): remove me, only for debugging
+	vel := image.Pt(rand.IntN(3)-1, rand.IntN(3)-1)
+
 	id := sw.IDGen.New()
 	sw.UnitRepo.Upsert(id, model.Unit{
 		Animation: unitAnim,
-		Position:  sw.MouseInput.Position().Sub(unitAnim.Size.Div(2)),
+		Position:  geom.FromPoint(sw.MouseInput.Position().Sub(unitAnim.Size.Div(2))),
+		Velocity:  geom.FromPoint(vel),
 	})
 
 	return nil

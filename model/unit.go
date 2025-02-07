@@ -1,12 +1,12 @@
 package model
 
 import (
-	"image"
-
+	"github.com/elemir/gloomo/geom"
 	gmodel "github.com/elemir/gloomo/model"
 )
 
 type Unit struct {
-	Animation *gmodel.Animation
-	Position  image.Point
+	Animation *gmodel.AnimationSheet
+	Position  geom.Vec2
+	Velocity  geom.Vec2
 }

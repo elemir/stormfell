@@ -4,20 +4,20 @@ animations:
   - name: north
     steps: [0, 5, 10, 0, 15, 20]
   - name: northeast
-    steps: [1, 6, 11, 1, 16, 20]
+    steps: [1, 6, 11, 1, 16, 21]
   - name: east
-    steps: [2, 7, 12, 2, 17, 21]
+    steps: [2, 7, 12, 2, 17, 22]
   - name: southeast
-    steps: [3, 8, 13, 3, 18, 22]
+    steps: [3, 8, 13, 3, 18, 23]
   - name: south
     steps: [4, 9, 14, 4, 19, 24]
   - name: southwest
-    steps: [3, 8, 13, 3, 18, 22]
+    steps: [3, 8, 13, 3, 18, 23]
     mirror: true
   - name: west
-    steps: [2, 7, 21, 2, 17, 22]
+    steps: [2, 7, 12, 2, 17, 22]
     mirror: true
   - name: northwest
-    steps: [1, 6, 11, 1, 16, 20]
+    steps: [1, 6, 11, 1, 16, 21]
     mirror: true
     
