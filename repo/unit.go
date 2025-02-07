@@ -51,18 +51,16 @@ func (u *Unit) List() iter.Seq2[gid.ID, model.Unit] {
 	}
 }
 
-var (
-	animations = []string{
-		"north",
-		"northeast",
-		"east",
-		"southeast",
-		"south",
-		"southwest",
-		"west",
-		"northwest",
-	}
-)
+var animations = []string{
+	"north",
+	"northeast",
+	"east",
+	"southeast",
+	"south",
+	"southwest",
+	"west",
+	"northwest",
+}
 
 func (u *Unit) Upsert(id gid.ID, unit model.Unit) {
 	dir := direction(unit.Velocity.Angle())

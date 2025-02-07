@@ -6,6 +6,7 @@ linters:
     - tparallel
     - paralleltest
     - mnd
+    - gochecknoglobals
 linters-settings:
   funlen:
     lines: 200
