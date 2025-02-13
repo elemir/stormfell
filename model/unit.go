@@ -9,4 +9,5 @@ type Unit struct {
 	Animation *gmodel.AnimationSheet
 	Position  geom.Vec2
 	Velocity  geom.Vec2
+	Accel     geom.Vec2
 }

@@ -62,6 +62,7 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 
 	var objPositions container.SparseArray[geom.Vec2]
 	var objVelocities container.SparseArray[geom.Vec2]
+	var objAccels container.SparseArray[geom.Vec2]
 	var animations container.SparseArray[*gmodel.AnimationSheet]
 	var stepCounters container.SparseArray[int]
 	var currentAnimations container.SparseArray[string]
@@ -79,6 +80,7 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 		Animations:        &animations,
 		Positions:         &objPositions,
 		Velocities:        &objVelocities,
+		Accelerations:     &objAccels,
 		ZIndices:          &zIndices,
 		CurrentAnimations: &currentAnimations,
 	}
@@ -122,6 +124,26 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 		MouseInput:      &mouseInput,
 		UnitRepo:        unitRepo,
 		AnimationLoader: &animAssets,
+	})
+
+	manager.Add(&system.Separation{
+		UnitRepo: unitRepo,
+	})
+
+	manager.Add(&system.Cohesion{
+		UnitRepo: unitRepo,
+	})
+
+	manager.Add(&system.Alignment{
+		UnitRepo: unitRepo,
+	})
+
+	manager.Add(&system.Accel{
+		UnitRepo: unitRepo,
+	})
+
+	manager.Add(&system.Move{
+		UnitRepo: unitRepo,
 	})
 
 	manager.Add(&gsystem.Animate{

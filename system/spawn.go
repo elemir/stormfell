@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"image"
 	"iter"
-	"math/rand/v2"
 
 	"github.com/elemir/gloomo/geom"
 	gid "github.com/elemir/gloomo/id"
@@ -54,14 +53,10 @@ func (sw *SpawnWarrior) Run() error {
 		return nil
 	}
 
-	// TODO(elemir): remove me, only for debugging
-	vel := image.Pt(rand.IntN(3)-1, rand.IntN(3)-1)
-
 	id := sw.IDGen.New()
 	sw.UnitRepo.Upsert(id, model.Unit{
 		Animation: unitAnim,
 		Position:  geom.FromPoint(sw.MouseInput.Position().Sub(unitAnim.Size.Div(2))),
-		Velocity:  geom.FromPoint(vel),
 	})
 
 	return nil

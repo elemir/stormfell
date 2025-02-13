@@ -23,6 +23,7 @@ type Unit struct {
 	Animations        Collection[*gmodel.AnimationSheet]
 	Positions         Collection[geom.Vec2]
 	Velocities        Collection[geom.Vec2]
+	Accelerations     Collection[geom.Vec2]
 }
 
 func (u *Unit) List() iter.Seq2[gid.ID, model.Unit] {
@@ -38,9 +39,15 @@ func (u *Unit) List() iter.Seq2[gid.ID, model.Unit] {
 				continue
 			}
 
+			accel, ok := u.Accelerations.Get(id)
+			if !ok {
+				continue
+			}
+
 			unit := model.Unit{
 				Position:  pos,
 				Velocity:  vel,
+				Accel:     accel,
 				Animation: anim,
 			}
 
@@ -52,24 +59,25 @@ func (u *Unit) List() iter.Seq2[gid.ID, model.Unit] {
 }
 
 var animations = []string{
+	"west",
+	"northwest",
 	"north",
 	"northeast",
 	"east",
 	"southeast",
 	"south",
 	"southwest",
-	"west",
-	"northwest",
 }
 
 func (u *Unit) Upsert(id gid.ID, unit model.Unit) {
-	dir := direction(unit.Velocity.Angle())
-
 	u.Velocities.Set(id, unit.Velocity)
 	u.Positions.Set(id, unit.Position)
-	u.CurrentAnimations.Set(id, animations[dir])
+	u.Accelerations.Set(id, unit.Accel)
 	u.Animations.Set(id, unit.Animation)
 	u.ZIndices.Set(id, 1)
+
+	dir := direction(unit.Velocity.Angle())
+	u.CurrentAnimations.Set(id, animations[dir])
 }
 
 func (u *Unit) Get(id gid.ID) (model.Unit, bool) {
@@ -88,10 +96,16 @@ func (u *Unit) Get(id gid.ID) (model.Unit, bool) {
 		return model.Unit{}, false
 	}
 
+	accel, ok := u.Accelerations.Get(id)
+	if !ok {
+		return model.Unit{}, false
+	}
+
 	return model.Unit{
 		Position:  pos,
 		Animation: anim,
 		Velocity:  vel,
+		Accel:     accel,
 	}, true
 }
 
