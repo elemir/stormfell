@@ -95,8 +95,8 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 
 	manager.AddStartup(&start.MapGenerator{
 		Coeff:  0.05,
-		Width:  1000,
-		Height: 1000,
+		Width:  100,
+		Height: 100,
 		Noise:  fractalNoise,
 		Levels: []float64{-0.3, 0},
 		Setter: &tileMap,

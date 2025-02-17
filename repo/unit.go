@@ -76,8 +76,11 @@ func (u *Unit) Upsert(id gid.ID, unit model.Unit) {
 	u.Animations.Set(id, unit.Animation)
 	u.ZIndices.Set(id, 1)
 
-	dir := direction(unit.Velocity.Angle())
-	u.CurrentAnimations.Set(id, animations[dir])
+	_, ok := u.CurrentAnimations.Get(id)
+	if !ok || unit.Velocity.Length() > 0 {
+		dir := direction(unit.Velocity.Angle())
+		u.CurrentAnimations.Set(id, animations[dir])
+	}
 }
 
 func (u *Unit) Get(id gid.ID) (model.Unit, bool) {

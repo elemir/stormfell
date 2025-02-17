@@ -35,12 +35,14 @@ linters-settings:
   varnamelen:
     ignore-names:
       - xs
+      - x
+      - y
+      - x0
+      - y0
     ignore-decls:
       - ok bool
       - i int
       - j int
       - id gid.ID
-      - x float64
-      - y float64
   wsl:
     allow-cuddle-declarations: true

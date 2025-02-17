@@ -1,6 +1,8 @@
 package start
 
 import (
+	"maps"
+
 	"github.com/elemir/stormfell/algo"
 	"github.com/elemir/stormfell/model"
 )
@@ -31,6 +33,16 @@ func (mg *MapGenerator) Run() error {
 			noise := mg.Noise.Noise(float64(i)*mg.Coeff, float64(j)*mg.Coeff)
 
 			tileMap[i][j] = algo.BinSearch(mg.Levels, noise)
+		}
+	}
+
+	for range 5 {
+		for i := range mg.Width {
+			for j := range mg.Height {
+				if len(maps.Collect(tileMap.Neighbours(i, j))) <= 3 {
+					tileMap[i][j] = 0
+				}
+			}
 		}
 	}
 
