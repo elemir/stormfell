@@ -51,7 +51,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Layout(w int, h int) (int, int) {
-	g.w, g.h = w/3, h/3
+	g.w, g.h = 640, h*640/w
 
 	return g.w, g.h
 }
@@ -66,6 +66,7 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 	var animations container.SparseArray[*gmodel.AnimationSheet]
 	var stepCounters container.SparseArray[int]
 	var currentAnimations container.SparseArray[string]
+	var stoppedAnimations container.Set
 	var zIndices container.SparseArray[int]
 
 	var mouseInput input.Mouse
@@ -83,6 +84,7 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 		Accelerations:     &objAccels,
 		ZIndices:          &zIndices,
 		CurrentAnimations: &currentAnimations,
+		StoppedAnimations: &stoppedAnimations,
 	}
 
 	animRepo := &grepo.AnimatedSprite{
@@ -91,6 +93,7 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 		ZIndices:          &zIndices,
 		StepCounters:      &stepCounters,
 		CurrentAnimations: &currentAnimations,
+		StoppedAnimations: &stoppedAnimations,
 	}
 
 	manager.AddStartup(&start.MapGenerator{
@@ -135,6 +138,11 @@ func prepareManager(spriteRepo *grepo.Sprite) *gloomo.Manager {
 	})
 
 	manager.Add(&system.Alignment{
+		UnitRepo: unitRepo,
+	})
+
+	manager.Add(&system.WallAvoid{
+		TileMap:  &tileMap,
 		UnitRepo: unitRepo,
 	})
 

@@ -17,9 +17,16 @@ type Collection[T any] interface {
 	Items() iter.Seq2[gid.ID, T]
 }
 
+type Set interface {
+	Add(id gid.ID)
+	Get(id gid.ID) bool
+	Delete(id gid.ID)
+}
+
 type Unit struct {
 	ZIndices          Collection[int]
 	CurrentAnimations Collection[string]
+	StoppedAnimations Set
 	Animations        Collection[*gmodel.AnimationSheet]
 	Positions         Collection[geom.Vec2]
 	Velocities        Collection[geom.Vec2]
@@ -80,6 +87,12 @@ func (u *Unit) Upsert(id gid.ID, unit model.Unit) {
 	if !ok || unit.Velocity.Length() > 0 {
 		dir := direction(unit.Velocity.Angle())
 		u.CurrentAnimations.Set(id, animations[dir])
+	}
+
+	if unit.Velocity.Length() == 0 {
+		u.StoppedAnimations.Add(id)
+	} else {
+		u.StoppedAnimations.Delete(id)
 	}
 }
 
